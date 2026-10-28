@@ -1,0 +1,17 @@
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+
+# --- ROS2 / colcon: se regenera siempre, NUNCA se versiona ---
+build/
+install/
+log/
+
+# --- Salidas de la herramienta ---
+informe_*.png
+
+# --- Bags grandes: no se suben a Git (usar Git LFS, DVC o almacenamiento aparte).
+# Los bags de referencia pequeños de la carpeta bags/ SI se versionan.
+bags_grandes/
+*.db3

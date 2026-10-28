@@ -1,0 +1,42 @@
+{
+  "descripcion": "Contrato de regresion de la P2: que debe diagnosticar analiza_bag.py sobre cada bag de referencia. Anade aqui TU bag mi_rango (y tu reto) en el ejercicio 7",
+  "cadena": [
+    "/distancia",
+    "/distancia_filtrada",
+    "/cmd_vel_demo"
+  ],
+  "esperado_hz": {
+    "/distancia": 10.0
+  },
+  "bags": {
+    "caso_0_linea_base": {
+      "salida": 0,
+      "errores": []
+    },
+    "caso_1": {
+      "salida": 1,
+      "errores": [
+        "CAIDA_EN_CADENA",
+        "LATENCIA_ALTA"
+      ]
+    },
+    "caso_2": {
+      "salida": 1,
+      "errores": [
+        "RELOJ_DESFASADO"
+      ]
+    },
+    "caso_3": {
+      "salida": 1,
+      "errores": [
+        "HUECOS"
+      ]
+    },
+    "caso_4": {
+      "salida": 1,
+      "errores": [
+        "SIN_DATOS"
+      ]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# Integracion continua de tu repositorio de la P2 (parte de la Sesion 9).
+# Se ejecuta en cada push a main y en cada pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v7
+
+      - name: Preparar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Pruebas unitarias
+        run: python -m unittest discover -v
+
+      - name: Regresion con bags de referencia
+        run: python regresion_bags.py
+
+      - name: Bag sano debe dar TODO_OK
+        run: python analiza_bag.py bags/caso_0_linea_base
+
+      - name: Informe grafico del caso 1 (siempre, incluso si algo falla)
+        if: always()
+        run: python analiza_bag.py bags/caso_1 --png informe_caso1.png || true
+
+      - name: Guardar informe como artefacto
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: informe-caso1
+          path: informe_caso1.png
+          if-no-files-found: ignore
