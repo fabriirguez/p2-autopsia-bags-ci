@@ -37,6 +37,10 @@
       "errores": [
         "SIN_DATOS"
       ]
+    },
+    "mi_rango": {
+      "salida": 0,
+      "errores": []
     }
   }
 }

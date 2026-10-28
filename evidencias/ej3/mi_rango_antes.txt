@@ -1,0 +1,11 @@
+$ python3 analiza_bag.py bags/mi_rango --esperado /distancia=10   # ANTES del ejercicio 3
+== Informe de mi_rango ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        400   10.00    0.10    0.007
+
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+salida: 0
