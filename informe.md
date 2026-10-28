@@ -1,8 +1,8 @@
 # Práctica P2 (Tema 2) — Informe
 
-**Nombre:** <<RELLENAR>>
+**Nombre:** Fabricio Andree Rodriguez
 **Fecha:** <<RELLENAR>>
-**Entorno usado:** (Colab / local; versión de Python; ¿ROS2? ¿cuál?) <<RELLENAR>>
+**Entorno usado:** (Colab / local; versión de Python; ¿ROS2? ¿cuál?) Kit local (opción B) en Linux: Python 3.13, `rosbags`, `matplotlib`, `pyyaml`, Git 2.43. **Sin ROS2** (bags sintéticos generados con `simulador_bags.py`). CI en GitHub Actions (`ubuntu-24.04`, Python 3.12).
 
 > Regla de oro: **hipótesis escrita ANTES de medir**. Cada afirmación lleva su evidencia (comando + salida o gráfica).
 
@@ -10,8 +10,8 @@
 
 ## Declaración de autoría y uso de IA
 
-Trabajo individual. Fuentes consultadas: <<RELLENAR>>
-Uso de asistentes de IA (para qué, o «ninguno»): <<RELLENAR>>
+Trabajo individual. Fuentes consultadas: enunciado de la P2 y cuaderno `P2_Practica_Colab.ipynb`; diapositivas de la S8 (*Tema 2 · Sesión 8: rosbag2, RViz y depuración de fallos de arquitectura*) y lo visto en la S7 y la S9; el código del kit (`analiza_bag.py`, `simulador_bags.py`, `regresion_bags.py`, `entrega.py`); la definición de `sensor_msgs/msg/Range` (convenios: valores fuera de `[min_range, max_range]` «should be discarded», ±Inf según REP 117), en https://docs.clearpathrobotics.com/api/html/sensor_msgs/msg/Range.html; las etiquetas oficiales de `actions/checkout`, `actions/setup-python` y `actions/upload-artifact` (`git ls-remote --tags`) para comprobar que existe la `v7` que usa `ci.yml`. No he abierto `genera_bags_demo.py` (contiene las soluciones de los casos).
+Uso de asistentes de IA (para qué, o «ninguno»): **sí, Claude (Anthropic)**, como asistente durante toda la práctica. Lo he usado para: reconstruir el kit a partir del cuaderno; proponer y ejecutar los análisis (manteniendo la regla de hipótesis antes de medir, con commits que lo demuestran); escribir borradores del código (`comprobar_rangos`, `comprobar_frames`, la integración en `analiza_bag.py`, las pruebas propias y los scripts de `herramientas_extra/`) y del texto del informe; preparar el repositorio, los commits y la CI. En el ejercicio 4 usé además un agente de IA independiente como **«resolvedor a ciegas»** de mi reto, en una carpeta aislada sin la solución, porque no tenía compañero (lo detallo allí; no lo presento como un compañero). Los commits llevan la línea `Co-Authored-By: Claude`. He revisado todo lo entregado y puedo explicar cada decisión, comando y resultado.
 
 ## Ejercicio 1 — Caso 5 (`bags/caso_5_casa`)
 
@@ -149,7 +149,7 @@ Puntos de control de la *Guía de autoformación de la S8* (resumen de lo aprend
 | Ejecución de CI en **verde** (URL de la ejecución en Actions) | <<RELLENAR>> |
 | Ejecución de CI en **rojo** provocada a propósito (URL) y commit que la arregla | <<RELLENAR>> |
 | Qué rompí a propósito y cómo lo diagnostiqué en el log | <<RELLENAR>> |
-| Bag(s) que añadí a `esperado.json` y por qué | <<RELLENAR>> |
+| Bag(s) que añadí a `esperado.json` y por qué | **`mi_rango`**: primero, en `main`, con `salida 0, errores []`, que era el diagnóstico real de la herramienta original (ciega al rango). El contrato describe lo que la herramienta **hace**, no lo que debería hacer; si no, la CI estaría en rojo por algo que nadie había especificado. En la rama `ej3-rango`, al integrar mi comprobación, la regresión **se puso en rojo sola** («esperado ninguno (salida 0), obtenido ['RANGO_FUERA'] (salida 1)», `evidencias/ej3/regresion_detecta_cambio.txt`). Por eso actualicé el contrato a `salida 1, errores ["RANGO_FUERA"]` **en el mismo PR** que la comprobación, como cambio consciente y revisado. **`mi_fallo`** (mi reto): `salida 0, errores []`. Es un **punto ciego declarado**: la herramienta da `TODO_OK` aunque el bag tiene un fallo real. Si alguien añade `SELLO_REPETIDO` o una alerta por latencia máxima, la regresión avisará y obligará a actualizar el contrato a propósito. |
 
 Si **no** has podido usar GitHub, escribe aquí por qué y adjunta en `evidencias/` el `git_log.txt`, la salida de `simula_ci.py` y las capturas `ci_rojo` / `ci_verde` de la simulación local: la nota máxima del ejercicio baja (ver enunciado).
 
@@ -169,8 +169,13 @@ Git compara cada rama con el **ancestro común**. Si las dos cambiaron las misma
 
 ## Opcional — `ros2 bag play` y RViz2
 
-<<RELLENAR o "No realizado">>
+No realizado: no dispongo de ROS2 en el entorno de trabajo, así que no he podido usar `ros2 bag play` ni RViz2. Como sustituto he usado las gráficas `--png` (panel «Valores», el sustituto de RViz sin pantalla).
 
 ## Reflexión final (5 líneas)
 
-¿Qué fue lo más difícil? ¿Qué cambiarías en la herramienta? ¿Qué le faltó al bag para estar seguro de la causa? <<RELLENAR>>
+¿Qué fue lo más difícil? ¿Qué cambiarías en la herramienta? ¿Qué le faltó al bag para estar seguro de la causa?
+Lo más difícil fue no fiarme del `TODO_OK`: en `mi_rango` y en mi reto la herramienta daba el sistema por sano y solo las gráficas y los valores contaban la verdad.
+También me costó aceptar que mis propias suposiciones fallaban: una prueba mía era incorrecta (el jitter) y la causa de mi reto la refutó el propio bag (el salto a 0,60 m).
+En la herramienta cambiaría tres cosas: alertar por latencia **máxima o p95** (no solo la mediana), añadir **`SELLO_REPETIDO`** y **retraso de la señal**, y leer los valores también de `Float32` (`data`).
+A los bags les faltaba lo que no viaja con los mensajes: **parámetros, `/rosout` y `/parameter_events`**. Con eso, en el caso 5 sabría si 1 Hz es un error o el diseño, y en el reto qué falló dentro del filtro.
+Lección: un bag dice **dónde** y **cuándo**; el **porqué** exige grabar también el contexto del sistema.
