@@ -15,5 +15,21 @@ sim.generar('mi_float_sano',    B, tipo_mensaje='Float32')
 sim.generar('mi_float_lento',   B, tipo_mensaje='Float32', retardo_filtro=0.15)
 # Ejercicio 3: el sensor publica 9,9 m (max_range = 4 m) entre 10 s y 12 s
 sim.generar('mi_rango',         B, fuera_de_rango=(10, 12, 9.9))
+# Ejercicio 4: mi quinto fallo (la explicación está SOLO en informe.md, sección «Solución»)
+def mi_fallo(msgs, ini=15.0, fin=30.0):
+    """Entre ini y fin el filtro ya no recibe /distancia, pero un temporizador sigue
+    republicando a 10 Hz su ÚLTIMO mensaje (con su header original), y el controlador repite su última orden.
+    El sensor sigue sano. Ritmos intactos -> analiza_bag.py no lo ve."""
+    salida, ultimo = [], {}
+    for topic, tipo, t, msg in sorted(msgs, key=lambda m: m[2]):
+        rel = t - sim.T0
+        if topic in ('/distancia_filtrada', '/cmd_vel_demo') and ini <= rel < fin and topic in ultimo:
+            msg = ultimo[topic]                       # mismo objeto: mismo valor y mismo header.stamp
+        elif not (ini <= rel < fin):
+            ultimo[topic] = msg
+        salida.append((topic, tipo, t, msg))
+    return salida
+
+sim.generar('mi_fallo',         B, post=mi_fallo)   # nombre neutro: el .mcap guarda el nombre dentro
 print('bags propios regenerados en bags/mi_*')
 PY
