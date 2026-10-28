@@ -1,0 +1,57 @@
+== Informe de mi_sano ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        400   10.00    0.10    0.007
+
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+salida: 0
+
+== Informe de mi_lento ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        266    6.67    0.15        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        266    6.67    0.15    1.104
+
+Hallazgos:
+  [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 6.7 Hz: el ritmo cae en el nodo que une ambos topics
+  [ERROR] LATENCIA_ALTA     /distancia_filtrada    latencia mediana 1.10 s (maxima 1.16 s) > 0.1 s: los datos llegan viejos (cola llena o callback lento aguas arriba)
+salida: 1
+
+== Informe de mi_lento_cola1 ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        266    6.67    0.15        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        266    6.67    0.15    0.204
+
+Hallazgos:
+  [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 6.7 Hz: el ritmo cae en el nodo que une ambos topics
+  [ERROR] LATENCIA_ALTA     /distancia_filtrada    latencia mediana 0.20 s (maxima 0.25 s) > 0.1 s: los datos llegan viejos (cola llena o callback lento aguas arriba)
+salida: 1
+
+== Informe de mi_float_sano ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Float32                      400   10.00    0.10        -
+/distancia_filtrada      Float32                      400   10.00    0.10        -
+
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+salida: 0
+
+== Informe de mi_float_lento ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        266    6.67    0.15        -
+/distancia               Float32                      400   10.00    0.10        -
+/distancia_filtrada      Float32                      266    6.67    0.15        -
+
+Hallazgos:
+  [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 6.7 Hz: el ritmo cae en el nodo que une ambos topics
+salida: 1
+

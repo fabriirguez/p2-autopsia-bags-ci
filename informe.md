@@ -39,12 +39,34 @@ Uso de asistentes de IA (para qué, o «ninguno»): <<RELLENAR>>
 - `mi_lento_cola1` (lo mismo con cola de 1): el ritmo cae igual (el filtro no es más rápido), pero la latencia baja a ≈ 0,1-0,25 s, porque siempre se procesa el dato más reciente y se descarta el resto. Es posible que aún supere el umbral de 0,1 s.
 - `mi_float_sano` y `mi_float_lento` (Float32, sin cabecera): la herramienta solo puede contar mensajes y mirar los instantes de grabación. Se detectará la `CAIDA_EN_CADENA`, pero **desaparecerá `LATENCIA_ALTA`** (no hay `header.stamp`) y no se podrá comprobar el reloj (`RELOJ_DESFASADO`).
 
-Bags entregados (en `bags/`, nombres que empiezan por `mi_`): <<RELLENAR>>
-Cómo los generé (comandos): <<RELLENAR>>
+Bags entregados (en `bags/`, nombres que empiezan por `mi_`): `mi_sano` (sano, Range), `mi_lento` (callback del filtro de 0,15 s, cola de 10), `mi_lento_cola1` (el mismo fallo con cola de 1), `mi_float_sano` (sano, Float32 sin cabecera) y `mi_float_lento` (el mismo fallo, Float32). `mi_rango` es del ejercicio 3.
+Cómo los generé (comandos): sin ROS2, con `simulador_bags.py` (semilla fija → bags idénticos en cada ejecución). **Se regeneran todos con un solo comando: `bash generar_mis_bags.sh`**, que contiene exactamente estas llamadas:
+```python
+sim.generar('mi_sano',        'bags')
+sim.generar('mi_lento',       'bags', retardo_filtro=0.15)
+sim.generar('mi_lento_cola1', 'bags', retardo_filtro=0.15, profundidad=1)
+sim.generar('mi_float_sano',  'bags', tipo_mensaje='Float32')
+sim.generar('mi_float_lento', 'bags', tipo_mensaje='Float32', retardo_filtro=0.15)
+```
+Análisis: `for b in mi_sano mi_lento mi_lento_cola1 mi_float_sano mi_float_lento; do python3 analiza_bag.py bags/$b --esperado /distancia=10; done` → `evidencias/ej2/analisis_mis_bags.txt` (gráficas: `evidencias/ej2/grafica_mi_lento.png` y `grafica_mi_float_lento.png`). La vía con ROS2 (`ros2 bag record`) no la he hecho: no tengo ROS2 instalado en el entorno de trabajo.
 
-Tabla comparativa sano / con fallo (ritmos, latencia, hallazgos): <<RELLENAR>>
+Tabla comparativa sano / con fallo (ritmos, latencia, hallazgos):
 
-**¿Qué no puede medir la herramienta con mensajes sin cabecera (`Float32`)? ¿Por qué?** <<RELLENAR>>
+| Bag | Tipo | `/distancia` Hz | `/distancia_filtrada` Hz | `/cmd_vel_demo` Hz | Latencia mediana del filtro (máx.) | Hallazgos | Salida | ¿Se cumple la hipótesis? |
+|---|---|---|---|---|---|---|---|---|
+| `mi_sano` | Range | 10,00 | 10,00 | 10,00 | 0,007 s | `TODO_OK` | 0 | — (referencia) |
+| `mi_lento` | Range | 10,00 | **6,67** | 6,67 | **1,104 s** (1,16) | `CAIDA_EN_CADENA`, `LATENCIA_ALTA` | 1 | Sí: predije ≈ 6,7 Hz y ≈ 1,1-1,2 s |
+| `mi_lento_cola1` | Range | 10,00 | **6,67** | 6,67 | **0,204 s** (0,25) | `CAIDA_EN_CADENA`, `LATENCIA_ALTA` | 1 | Sí: el mismo ritmo, pero la latencia se divide por 5 y sigue por encima de 0,1 s |
+| `mi_float_sano` | Float32 | 10,00 | 10,00 | 10,00 | — (no medible) | `TODO_OK` | 0 | — (referencia) |
+| `mi_float_lento` | Float32 | 10,00 | **6,67** | 6,67 | — (no medible) | solo `CAIDA_EN_CADENA` | 1 | Sí: se pierde `LATENCIA_ALTA` |
+
+Lectura: el eslabón es el filtro (`/distancia` → `/distancia_filtrada`) y la familia es **dinámica** (callback lento). `mi_lento` y `mi_lento_cola1` demuestran lo de la S8, «dimensionar una cola es dimensionar un retraso»: la cola no cambia cuánto procesa el filtro, solo **cuánto envejecen** los datos (1,10 s frente a 0,20 s). Para control, la cola de 1 es preferible: el dato es fresco aunque se pierdan muestras.
+
+**¿Qué no puede medir la herramienta con mensajes sin cabecera (`Float32`)? ¿Por qué?** La latencia es `grabación − header.stamp`. Sin cabecera solo existe un instante, el de grabación, y falta el de **nacimiento del dato** en el sensor. Por eso no puede medir: (1) la **latencia** (`LATENCIA_ALTA`); (2) la **coherencia del reloj** (`RELOJ_DESFASADO`), porque no hay sellos que comparar; (3) tampoco puede emparejar cada salida del filtro con la entrada que la produjo, porque nada viaja con el dato. Además, sin `frame_id`, `min_range` y `max_range` tampoco servirían las comprobaciones del ejercicio 3, y la herramienta ni siquiera dibuja los valores (busca el campo `range`, y Float32 lo llama `data`). Lo único que queda es **contar mensajes y medir intervalos de grabación**: ritmo, huecos y caída en cadena.
+
+**Mismo fallo, distinto tipo (`mi_lento` frente a `mi_float_lento`): ¿qué hallazgo se pierde?** Se pierde **`LATENCIA_ALTA` (1,10 s)**, que es precisamente el dato que más importa para el control: dice que el robot actúa con información de hace más de un segundo. La consecuencia la he comprobado (`evidencias/ej2/float_cola10_vs_cola1.txt`): con Float32, el fallo con cola de 10 y con cola de 1 dan **una salida idéntica**. La herramienta no puede distinguir «datos de hace 1,1 s» de «datos de hace 0,2 s», que llevan a arreglos distintos (reducir la cola frente a acelerar el callback).
+
+**¿Qué haría en el sistema real para medir latencia sin cabecera?** (1) **Lo mejor: cambiar la interfaz** a un mensaje con sello de tiempo (`sensor_msgs/Range` o un tipo propio con `std_msgs/Header`), y que el filtro **copie el `header.stamp` de entrada** a su salida en lugar de poner `now()`, para que el sello represente el origen del dato. (2) Si la interfaz no se puede tocar: publicar **en paralelo** un topic de diagnóstico con sello (p. ej. un `Header` con el instante de recepción y el de salida en cada nodo). También se puede instrumentar el sistema con **`ros2_tracing`** (LTTng), que mide cuándo se publica cada mensaje y cuánto dura cada callback sin cambiar los mensajes. (3) Como mínimo, medir la **duración del callback** del filtro con logs o estadísticas (`ros2 topic hz` en cada eslabón y tiempos de callback). Con eso se obtiene la capacidad del nodo, aunque no la edad del dato.
 
 ## Ejercicio 3 — Extensión de la herramienta
 

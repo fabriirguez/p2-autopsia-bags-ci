@@ -1,0 +1,16 @@
+# Mismo fallo sin cabecera, cola 10 vs cola 1: la herramienta no puede distinguirlos
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        266    6.67    0.15        -
+/distancia               Float32                      400   10.00    0.10        -
+/distancia_filtrada      Float32                      266    6.67    0.15        -
+
+Hallazgos:
+  [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 6.7 Hz: el ritmo cae en el nodo que une ambos topics
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        266    6.67    0.15        -
+/distancia               Float32                      400   10.00    0.10        -
+/distancia_filtrada      Float32                      266    6.67    0.15        -
+
+Hallazgos:
+  [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 6.7 Hz: el ritmo cae en el nodo que une ambos topics
