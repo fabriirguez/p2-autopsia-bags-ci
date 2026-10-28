@@ -1,0 +1,26 @@
+$ python3 analiza_bag.py bags/mi_fallo --esperado /distancia=10 --png evidencias/ej4/grafica_mi_fallo.png
+== Informe de mi_fallo ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        400   10.00    0.10    0.007
+
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+
+Graficas guardadas en evidencias/ej4/grafica_mi_fallo.png
+salida: 0
+
+$ python3 analiza_bag.py reto/reto_1 --esperado /distancia=10   # el reto empaquetado da lo mismo
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+salida: 0
+
+
+$ python3 herramientas_extra/por_tramos.py bags/mi_fallo 15 30
+0-15 s     /distancia 0.14-1.86 m | /distancia_filtrada 0.17-1.80 m (desv 0.559) | cmd linear.x 0.000-0.500 m/s
+15-30 s    /distancia 0.18-1.84 m | /distancia_filtrada 0.20-0.20 m (desv 0.000) | cmd linear.x 0.000-0.000 m/s
+30 s-fin   /distancia 0.15-1.59 m | /distancia_filtrada 0.19-1.52 m (desv 0.393) | cmd linear.x 0.000-0.500 m/s
+/distancia_filtrada: 400 mensajes, 250 sellos distintos -> 150 con sello repetido
+/distancia_filtrada: latencia mediana 0.007 s, latencia MÁXIMA 15.01 s (analiza_bag solo alerta por la mediana)

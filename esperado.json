@@ -43,6 +43,10 @@
       "errores": [
         "RANGO_FUERA"
       ]
+    },
+    "mi_fallo": {
+      "salida": 0,
+      "errores": []
     }
   }
 }
