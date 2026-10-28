@@ -1,0 +1,8 @@
+[OK   ] caso_0_linea_base    errores = ninguno
+[OK   ] caso_1               errores = ['CAIDA_EN_CADENA', 'LATENCIA_ALTA']
+[OK   ] caso_2               errores = ['RELOJ_DESFASADO']
+[OK   ] caso_3               errores = ['HUECOS']
+[OK   ] caso_4               errores = ['SIN_DATOS']
+[FALLO] mi_rango             esperado ninguno (salida 0), obtenido ['RANGO_FUERA'] (salida 1)
+
+5/6 bags con el diagnostico esperado

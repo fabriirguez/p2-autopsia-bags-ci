@@ -1,0 +1,31 @@
+test_dos_frames (test_mis_comprobaciones.PruebasFrames.test_dos_frames) ... ok
+test_un_solo_frame (test_mis_comprobaciones.PruebasFrames.test_un_solo_frame) ... ok
+test_frame_vacio_cuenta_como_frame_distinto (test_mis_comprobaciones.PruebasPropias.test_frame_vacio_cuenta_como_frame_distinto) ... ok
+test_inf_es_convenio_sin_deteccion_no_error (test_mis_comprobaciones.PruebasPropias.test_inf_es_convenio_sin_deteccion_no_error) ... ok
+test_integrado_en_analiza_bag (test_mis_comprobaciones.PruebasPropias.test_integrado_en_analiza_bag) ... malo: 450 mensajes -> /tmp/tmpl7x5phsk/malo
+sano: 450 mensajes -> /tmp/tmpl7x5phsk/sano
+ok
+test_limites_por_muestra_no_globales (test_mis_comprobaciones.PruebasPropias.test_limites_por_muestra_no_globales) ... ok
+test_margen_exacto_y_justo_por_encima (test_mis_comprobaciones.PruebasPropias.test_margen_exacto_y_justo_por_encima) ... ok
+test_margen_negativo_no_se_admite (test_mis_comprobaciones.PruebasPropias.test_margen_negativo_no_se_admite) ... ok
+test_mi_fallo_de_rango_cuenta_muestras_e_intervalo (test_mis_comprobaciones.PruebasPropias.test_mi_fallo_de_rango_cuenta_muestras_e_intervalo) ... rango: 450 mensajes -> /tmp/tmp_rja4cyp/rango
+ok
+test_nan_es_medida_invalida (test_mis_comprobaciones.PruebasPropias.test_nan_es_medida_invalida) ... ok
+test_un_solo_hallazgo_con_cuenta_e_intervalo (test_mis_comprobaciones.PruebasPropias.test_un_solo_hallazgo_con_cuenta_e_intervalo) ... ok
+test_valor_exactamente_en_los_limites_es_valido (test_mis_comprobaciones.PruebasPropias.test_valor_exactamente_en_los_limites_es_valido) ... ok
+test_con_bag_real_fuera_de_rango (test_mis_comprobaciones.PruebasRangos.test_con_bag_real_fuera_de_rango) ... malo: 150 mensajes -> /tmp/tmp92p4bu72/malo
+[ERROR] RANGO_FUERA    /distancia  11 de 50 muestras fuera de [min_range - 0, max_range + 0] (p. ej. [0.02, 4.00] m) entre 1.0 s y 2.0 s, en 1 tramo(s); valores de 9.90 a 9.90 m
+ok
+test_con_bag_real_sano (test_mis_comprobaciones.PruebasRangos.test_con_bag_real_sano) ... sano: 150 mensajes -> /tmp/tmp_evbkmkh/sano
+[INFO ] /distancia: sin problemas de rango ni de frame (50 muestras)
+ok
+test_margen_de_tolerancia (test_mis_comprobaciones.PruebasRangos.test_margen_de_tolerancia) ... ok
+test_por_debajo_del_minimo (test_mis_comprobaciones.PruebasRangos.test_por_debajo_del_minimo) ... ok
+test_por_encima_del_maximo (test_mis_comprobaciones.PruebasRangos.test_por_encima_del_maximo) ... ok
+test_sin_muestras (test_mis_comprobaciones.PruebasRangos.test_sin_muestras) ... ok
+test_todo_en_rango (test_mis_comprobaciones.PruebasRangos.test_todo_en_rango) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.271s
+
+OK

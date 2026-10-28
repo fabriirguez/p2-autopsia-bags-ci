@@ -39,8 +39,10 @@
       ]
     },
     "mi_rango": {
-      "salida": 0,
-      "errores": []
+      "salida": 1,
+      "errores": [
+        "RANGO_FUERA"
+      ]
     }
   }
 }

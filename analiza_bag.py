@@ -276,7 +276,18 @@ def _parse_esperado(items):
 def analizar_ruta(ruta, cadena=None, esperado=None, lat_max=0.1):
     series, t0 = leer_bag(ruta)
     stats = {t: estadisticas(s, t0) for t, s in series.items()}
-    return series, stats, t0, diagnosticar(stats, cadena, esperado, lat_max)
+    hallazgos = diagnosticar(stats, cadena, esperado, lat_max)
+    # Ejercicio 3: comprobaciones de contenido (rango y frame) de mis_comprobaciones.py sobre los topics Range.
+    # Import tardío: mis_comprobaciones importa Hallazgo de este módulo (evita la importación circular).
+    import mis_comprobaciones
+    rangos = sorted(t for t, s in series.items() if s.tipo == 'sensor_msgs/msg/Range' and t not in TOPICS_SISTEMA)
+    extra = mis_comprobaciones.comprobar_bag(ruta, rangos)
+    if extra:
+        if any(x.severidad in ('ERROR', 'WARN') for x in extra):
+            hallazgos = [x for x in hallazgos if x.codigo != 'TODO_OK']
+        orden = {'ERROR': 0, 'WARN': 1, 'INFO': 2}
+        hallazgos = sorted(hallazgos + extra, key=lambda x: (orden[x.severidad], x.codigo, x.topic))
+    return series, stats, t0, hallazgos
 
 
 def main(argv=None):
