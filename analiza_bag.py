@@ -273,7 +273,7 @@ def _parse_esperado(items):
     return out
 
 
-def analizar_ruta(ruta, cadena=None, esperado=None, lat_max=0.1):
+def analizar_ruta(ruta, cadena=None, esperado=None, lat_max=2.0):
     series, t0 = leer_bag(ruta)
     stats = {t: estadisticas(s, t0) for t, s in series.items()}
     hallazgos = diagnosticar(stats, cadena, esperado, lat_max)
