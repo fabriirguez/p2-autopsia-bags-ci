@@ -1,0 +1,3 @@
+caso_0_linea_base: periodo 0.100 s -> retraso de la señal /distancia -> /distancia_filtrada: 3 muestras = 0.30 s
+caso_5_casa: periodo 1.000 s -> retraso de la señal /distancia -> /distancia_filtrada: 2 muestras = 2.00 s
+primeros instantes de /distancia (s): ['0.000', '1.000', '2.000', '3.000', '4.000', '5.000']

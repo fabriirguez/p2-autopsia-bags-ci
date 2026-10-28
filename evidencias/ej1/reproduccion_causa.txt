@@ -1,0 +1,25 @@
+# Reproducción de la causa con el simulador (comandos en informe.md, Ej. 1)
+
+== Informe de repro_causa_1hz ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                         40    1.00    1.00        -
+/distancia               Range                         40    1.00    1.00    0.002
+/distancia_filtrada      Range                         40    1.00    1.00    0.007
+
+Hallazgos:
+  [ERROR] RITMO_BAJO        /distancia             1.00 Hz medidos frente a 10 Hz esperados
+salida: 1
+repro_causa_1hz: periodo 1.000 s -> retraso de la señal /distancia -> /distancia_filtrada: 2 muestras = 2.00 s
+
+== Informe de repro_arreglo_10hz ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        400   10.00    0.10    0.007
+
+Hallazgos:
+  [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+salida: 0
+repro_arreglo_10hz: periodo 0.100 s -> retraso de la señal /distancia -> /distancia_filtrada: 3 muestras = 0.30 s

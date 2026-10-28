@@ -1,0 +1,11 @@
+== Informe de caso_5_casa ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                         40    1.00    1.00        -
+/distancia               Range                         40    1.00    1.00    0.002
+/distancia_filtrada      Range                         40    1.00    1.00    0.007
+
+Hallazgos:
+  [ERROR] RITMO_BAJO        /distancia             1.00 Hz medidos frente a 10 Hz esperados
+
+Graficas guardadas en informe_caso5.png
