@@ -34,6 +34,11 @@ Uso de asistentes de IA (para qué, o «ninguno»): <<RELLENAR>>
 
 ## Ejercicio 2 — Mis propios bags
 
+**Hipótesis (escrita antes de generar y medir; commit «Escribe la hipótesis del ejercicio 2»).** Fallo elegido: **callback del filtro de 0,15 s** (distinto del caso 1, que tenía 0,4 s). Con él, el filtro solo puede procesar 1 / 0,15 ≈ **6,7 Hz** frente a los 10 Hz que entran. Predicciones:
+- `mi_lento` (Range, cola de 10): la cola se llena y la salida baja a ≈ 6,7 Hz, por debajo del 80 % de 10 Hz → `CAIDA_EN_CADENA` en `/distancia_filtrada`. Con la cola llena, cada mensaje avanza un puesto por cada mensaje que entra (cada 0,1 s), así que espera ≈ 10 × 0,1 s = 1,0 s; sumando el callback, la latencia será ≈ **1,1-1,2 s** → `LATENCIA_ALTA`.
+- `mi_lento_cola1` (lo mismo con cola de 1): el ritmo cae igual (el filtro no es más rápido), pero la latencia baja a ≈ 0,1-0,25 s, porque siempre se procesa el dato más reciente y se descarta el resto. Es posible que aún supere el umbral de 0,1 s.
+- `mi_float_sano` y `mi_float_lento` (Float32, sin cabecera): la herramienta solo puede contar mensajes y mirar los instantes de grabación. Se detectará la `CAIDA_EN_CADENA`, pero **desaparecerá `LATENCIA_ALTA`** (no hay `header.stamp`) y no se podrá comprobar el reloj (`RELOJ_DESFASADO`).
+
 Bags entregados (en `bags/`, nombres que empiezan por `mi_`): <<RELLENAR>>
 Cómo los generé (comandos): <<RELLENAR>>
 
