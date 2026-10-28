@@ -1,8 +1,8 @@
 # Práctica P2 (Tema 2) — Informe
 
-**Nombre:** <<RELLENAR>>
+**Nombre:** Fabricio Andree Rodriguez
 **Fecha:** <<RELLENAR>>
-**Entorno usado:** (Colab / local; versión de Python; ¿ROS2? ¿cuál?) <<RELLENAR>>
+**Entorno usado:** (Colab / local; versión de Python; ¿ROS2? ¿cuál?) Kit local (opción B) en Linux: Python 3.13, `rosbags`, `matplotlib`, `pyyaml`, Git 2.43. **Sin ROS2** (bags sintéticos generados con `simulador_bags.py`). CI en GitHub Actions (`ubuntu-24.04`, Python 3.12).
 
 > Regla de oro: **hipótesis escrita ANTES de medir**. Cada afirmación lleva su evidencia (comando + salida o gráfica).
 
@@ -10,8 +10,8 @@
 
 ## Declaración de autoría y uso de IA
 
-Trabajo individual. Fuentes consultadas: <<RELLENAR>>
-Uso de asistentes de IA (para qué, o «ninguno»): <<RELLENAR>>
+Trabajo individual. Fuentes consultadas: enunciado de la P2 y cuaderno `P2_Practica_Colab.ipynb`; diapositivas de la S8 (*Tema 2 · Sesión 8: rosbag2, RViz y depuración de fallos de arquitectura*) y lo visto en la S7 y la S9; el código del kit (`analiza_bag.py`, `simulador_bags.py`, `regresion_bags.py`, `entrega.py`); la definición de `sensor_msgs/msg/Range` (convenios: valores fuera de `[min_range, max_range]` «should be discarded», ±Inf según REP 117), en https://docs.clearpathrobotics.com/api/html/sensor_msgs/msg/Range.html; las etiquetas oficiales de `actions/checkout`, `actions/setup-python` y `actions/upload-artifact` (`git ls-remote --tags`) para comprobar que existe la `v7` que usa `ci.yml`. No he abierto `genera_bags_demo.py` (contiene las soluciones de los casos).
+Uso de asistentes de IA (para qué, o «ninguno»): **sí, Claude (Anthropic)**, como asistente durante toda la práctica. Lo he usado para: reconstruir el kit a partir del cuaderno; proponer y ejecutar los análisis (manteniendo la regla de hipótesis antes de medir, con commits que lo demuestran); escribir borradores del código (`comprobar_rangos`, `comprobar_frames`, la integración en `analiza_bag.py`, las pruebas propias y los scripts de `herramientas_extra/`) y del texto del informe; preparar el repositorio, los commits y la CI. En el ejercicio 4 usé además un agente de IA independiente como **«resolvedor a ciegas»** de mi reto, en una carpeta aislada sin la solución, porque no tenía compañero (lo detallo allí; no lo presento como un compañero). Los commits llevan la línea `Co-Authored-By: Claude`. He revisado todo lo entregado y puedo explicar cada decisión, comando y resultado.
 
 ## Ejercicio 1 — Caso 5 (`bags/caso_5_casa`)
 
@@ -129,9 +129,11 @@ Las 7 preguntas de la clase + 3 mías (cada una con su herramienta, qué detecta
 
 | # | Pregunta | Herramienta | Detecta | Caso que la justifica |
 |---|---|---|---|---|
-| 8 | <<RELLENAR>> | | | |
-| 9 | <<RELLENAR>> | | | |
-| 10 | <<RELLENAR>> | | | |
+| 8 | ¿El **contenido** de cada dato es físicamente posible y está en el marco esperado? (valores dentro de `[min_range, max_range]`, sin `NaN`, `±Inf` solo como convenio; un único `frame_id`) | `mis_comprobaciones.py` (`RANGO_FUERA`, `FRAME_MIXTO`), integrado en `analiza_bag.py`; en vivo, `ros2 topic echo /distancia --field range` | Datos imposibles que el ritmo no ve y que **se propagan** aguas abajo; sensores mal configurados (límites a 0); frames mezclados que tf2 colocaría mal | `mi_rango`: 2 s publicando 9,9 m con `max_range` = 4 m, y la herramienta original decía `TODO_OK`. Con la pregunta 8 sale `RANGO_FUERA` en `/distancia` **y** en `/distancia_filtrada` (22 muestras contaminadas por la media del filtro) |
+| 9 | ¿Cada dato es **nuevo** o se está republicando uno viejo? (sellos repetidos; latencia **máxima / p95** y no solo la mediana) | `herramientas_extra/por_tramos.py` (sellos repetidos, latencia máxima, desviación por tramo); `ros2 topic echo /x --field header.stamp`; gráfica de latencia de `--png` | Nodos «zombi» que publican por temporizador una caché antigua, fallos intermitentes que la mediana esconde, señales congeladas | `reto_1` (mi quinto fallo): ritmo perfecto y latencia **mediana** de 7 ms (`TODO_OK`), pero **latencia máxima de 15 s**, 150 sellos repetidos y una señal plana durante 15 s mientras el robot está parado sin motivo |
+| 10 | ¿La **señal** de salida de cada eslabón sigue a la de entrada a tiempo? (retraso de la señal, no del mensaje) | `herramientas_extra/retraso_senal.py` (correlación cruzada de `range`); panel de valores de `--png` | Filtros cuyo retraso efectivo crece al bajar el ritmo (ventana definida en muestras), salidas desacopladas de la entrada | Caso 5: cada mensaje llega en 7 ms, pero la señal filtrada va **2,0 s** detrás de la real (0,3 s en la línea base), porque la media móvil de 5 muestras a 1 Hz abarca 5 s. La latencia por mensaje no lo puede ver |
+
+Orden de coste: la 8 es barata (una pasada por los valores); la 9 necesita sellos y mirar por tramos; la 10, valores de dos topics y una correlación. Encajan detrás de la 5 («¿llegan frescos?»), que solo mira el transporte. Estas tres miran **qué** se transporta.
 
 ## Ejercicio 6 — Autoformación guiada
 
@@ -147,24 +149,33 @@ Puntos de control de la *Guía de autoformación de la S8* (resumen de lo aprend
 | Ejecución de CI en **verde** (URL de la ejecución en Actions) | <<RELLENAR>> |
 | Ejecución de CI en **rojo** provocada a propósito (URL) y commit que la arregla | <<RELLENAR>> |
 | Qué rompí a propósito y cómo lo diagnostiqué en el log | <<RELLENAR>> |
-| Bag(s) que añadí a `esperado.json` y por qué | <<RELLENAR>> |
+| Bag(s) que añadí a `esperado.json` y por qué | **`mi_rango`**: primero, en `main`, con `salida 0, errores []`, que era el diagnóstico real de la herramienta original (ciega al rango). El contrato describe lo que la herramienta **hace**, no lo que debería hacer; si no, la CI estaría en rojo por algo que nadie había especificado. En la rama `ej3-rango`, al integrar mi comprobación, la regresión **se puso en rojo sola** («esperado ninguno (salida 0), obtenido ['RANGO_FUERA'] (salida 1)», `evidencias/ej3/regresion_detecta_cambio.txt`). Por eso actualicé el contrato a `salida 1, errores ["RANGO_FUERA"]` **en el mismo PR** que la comprobación, como cambio consciente y revisado. **`mi_fallo`** (mi reto): `salida 0, errores []`. Es un **punto ciego declarado**: la herramienta da `TODO_OK` aunque el bag tiene un fallo real. Si alguien añade `SELLO_REPETIDO` o una alerta por latencia máxima, la regresión avisará y obligará a actualizar el contrato a propósito. |
 
 Si **no** has podido usar GitHub, escribe aquí por qué y adjunta en `evidencias/` el `git_log.txt`, la salida de `simula_ci.py` y las capturas `ci_rojo` / `ci_verde` de la simulación local: la nota máxima del ejercicio baja (ver enunciado).
 
 ## Memoria conceptual (con tus palabras; máximo 1 página en total)
 
-**M1.** Familias de fallo de arquitectura (estructural, dinámico, de tiempo, de origen aguas arriba): un ejemplo de cada una y la herramienta más barata que la detectaría. <<RELLENAR>>
+**M1.** Familias de fallo de arquitectura (estructural, dinámico, de tiempo, de origen aguas arriba): un ejemplo de cada una y la herramienta más barata que la detectaría.
+**Estructural:** el sensor publica en *best effort* y el filtro se suscribe en *reliable*. No pasa ningún dato → `ros2 topic info -v`. **Dinámico:** mi `mi_lento`, con un callback de 0,15 s que baja el filtro a 6,7 Hz y envejece el dato 1,1 s → `ros2 topic hz` en cada eslabón. **Tiempo:** un nodo con `use_sim_time` sin `/clock` estampa a 0 → `ros2 param get <nodo> use_sim_time`. **Origen aguas arriba:** un cable flojo hace callar al sensor 4 s y el hueco recorre toda la cadena → mirar dónde empieza **primero** el hueco (`HUECO_ORIGEN`); lo de abajo es consecuencia.
 
-**M2.** ¿Por qué una herramienta de análisis necesita pruebas unitarias, y qué significa que «un fallo no detectado es una especificación pendiente»? <<RELLENAR>>
+**M2.** ¿Por qué una herramienta de análisis necesita pruebas unitarias, y qué significa que «un fallo no detectado es una especificación pendiente»?
+La herramienta también es código que decide. Un `TODO_OK` falso da confianza falsa, y una falsa alarma rompe la CI y enseña a ignorarla. Las pruebas fijan qué debe decir en casos conocidos. También pueden estar mal: mi prueba de `mi_rango` esperaba un intervalo exacto y era ella la que fallaba (por el jitter). «Fallo no detectado = especificación pendiente» significa que un `TODO_OK` sobre un bag malo no prueba que no haya fallo, sino que **nadie ha dicho aún que eso lo es**. Se arregla escribiéndolo: prueba, comprobación y contrato. Así `mi_rango` pasó de salida 0 a 1, y `mi_fallo` queda como punto ciego declarado.
 
-**M3.** ¿Qué ocurre exactamente en un conflicto de fusión en Git, cómo se ve en el fichero y cómo se resuelve? ¿Por qué no se debe «aceptar el mío» sin leer? <<RELLENAR>>
+**M3.** ¿Qué ocurre exactamente en un conflicto de fusión en Git, cómo se ve en el fichero y cómo se resuelve? ¿Por qué no se debe «aceptar el mío» sin leer?
+Git compara cada rama con el **ancestro común**. Si las dos cambiaron las mismas líneas, no puede saber la intención: para la fusión y deja ambas versiones entre `<<<<<<< HEAD`, `=======` y `>>>>>>> rama`. Para resolverlo: leer las dos, escribir la versión correcta (que puede combinar ambas), quitar los marcadores, pasar las pruebas, `git add` y `git commit`. «Aceptar el mío» **borra en silencio el trabajo del otro** y suele compilar. Por ejemplo: si mi rama cambia `mi_rango` en `esperado.json` y otra añade `mi_fallo`, quedarme con lo mío saca `mi_fallo` del contrato, y la CI sigue en verde sin vigilarlo.
 
-**M4.** ¿Qué garantiza y qué NO garantiza una CI en verde? Usa como ejemplo el contrato de regresión con bags. <<RELLENAR>>
+**M4.** ¿Qué garantiza y qué NO garantiza una CI en verde? Usa como ejemplo el contrato de regresión con bags.
+**Garantiza** que, en ese commit y en un entorno limpio, todas las pruebas pasan y cada bag de referencia da **exactamente** el diagnóstico del contrato: nadie ha cambiado el comportamiento sin querer. **No garantiza** que ese comportamiento sea correcto. `mi_fallo` figura en el contrato con salida 0 y la CI está en verde, **aunque ese bag deja el robot parado 13 s sin motivo**. Tampoco cubre bags fuera del contrato, el robot real con ROS2, ni el futuro (`rosbags>=0.10` no está fijado). Verde significa «se comporta como se especificó», no «no hay fallos».
 
 ## Opcional — `ros2 bag play` y RViz2
 
-<<RELLENAR o "No realizado">>
+No realizado: no dispongo de ROS2 en el entorno de trabajo, así que no he podido usar `ros2 bag play` ni RViz2. Como sustituto he usado las gráficas `--png` (panel «Valores», el sustituto de RViz sin pantalla).
 
 ## Reflexión final (5 líneas)
 
-¿Qué fue lo más difícil? ¿Qué cambiarías en la herramienta? ¿Qué le faltó al bag para estar seguro de la causa? <<RELLENAR>>
+¿Qué fue lo más difícil? ¿Qué cambiarías en la herramienta? ¿Qué le faltó al bag para estar seguro de la causa?
+Lo más difícil fue no fiarme del `TODO_OK`: en `mi_rango` y en mi reto la herramienta daba el sistema por sano y solo las gráficas y los valores contaban la verdad.
+También me costó aceptar que mis propias suposiciones fallaban: una prueba mía era incorrecta (el jitter) y la causa de mi reto la refutó el propio bag (el salto a 0,60 m).
+En la herramienta cambiaría tres cosas: alertar por latencia **máxima o p95** (no solo la mediana), añadir **`SELLO_REPETIDO`** y **retraso de la señal**, y leer los valores también de `Float32` (`data`).
+A los bags les faltaba lo que no viaja con los mensajes: **parámetros, `/rosout` y `/parameter_events`**. Con eso, en el caso 5 sabría si 1 Hz es un error o el diseño, y en el reto qué falló dentro del filtro.
+Lección: un bag dice **dónde** y **cuándo**; el **porqué** exige grabar también el contexto del sistema.
