@@ -1,0 +1,134 @@
+
+X rojo-a-proposito CI fabriirguez/p2-autopsia-bags-ci#4 · 40731881059
+Triggered via pull_request less than a minute ago
+
+JOBS
+X pruebas in 21s (ID 122970072048)
+  ✓ Set up job
+  ✓ Descargar el codigo
+  ✓ Preparar Python
+  ✓ Instalar dependencias
+  X Pruebas unitarias
+  - Regresion con bags de referencia
+  - Bag sano debe dar TODO_OK
+  ✓ Informe grafico del caso 1 (siempre, incluso si algo falla)
+  ✓ Guardar informe como artefacto
+  - Post Preparar Python
+  ✓ Post Descargar el codigo
+  ✓ Complete job
+
+ANNOTATIONS
+X Process completed with exit code 1.
+pruebas: .github#105
+
+
+ARTIFACTS
+informe-caso1
+
+To see what failed, try: gh run view 40731881059 --log-failed
+View this run on GitHub: https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40731881059
+pruebas	Pruebas unitarias	﻿2026-10-28T17:02:58.0864390Z ##[group]Run python -m unittest discover -v
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0865032Z [36;1mpython -m unittest discover -v[0m
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0879136Z shell: /usr/bin/bash -e {0}
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0879416Z env:
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0879692Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0880121Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0880553Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0880926Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0881304Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0881678Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.0882006Z ##[endgroup]
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.7885244Z test_caso1_callback_bloqueante (test_analiza_bag.PruebasBags.test_caso1_callback_bloqueante) ... FAIL
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.7886599Z test_caso2_reloj (test_analiza_bag.PruebasBags.test_caso2_reloj) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.7887357Z test_caso3_hueco_nace_en_sensor (test_analiza_bag.PruebasBags.test_caso3_hueco_nace_en_sensor) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.7888109Z test_caso4_nombre_mal_escrito (test_analiza_bag.PruebasBags.test_caso4_nombre_mal_escrito) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.7888794Z test_caso5_ritmo_bajo (test_analiza_bag.PruebasBags.test_caso5_ritmo_bajo) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.9168927Z test_codigo_de_salida (test_analiza_bag.PruebasBags.test_codigo_de_salida) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.9380351Z test_info (test_analiza_bag.PruebasBags.test_info) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:02:58.9381772Z test_linea_base_sin_errores (test_analiza_bag.PruebasBags.test_linea_base_sin_errores) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1833217Z test_png (test_analiza_bag.PruebasBags.test_png) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1838151Z test_estadisticas_ritmo_y_huecos (test_analiza_bag.PruebasFunciones.test_estadisticas_ritmo_y_huecos) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1839853Z test_latencia_normal (test_analiza_bag.PruebasFunciones.test_latencia_normal) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1841209Z test_reloj_sellos_constantes (test_analiza_bag.PruebasFunciones.test_reloj_sellos_constantes) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1842397Z test_sin_cadena_sin_hallazgos_y_ok (test_analiza_bag.PruebasFunciones.test_sin_cadena_sin_hallazgos_y_ok) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1843474Z test_dos_frames (test_mis_comprobaciones.PruebasFrames.test_dos_frames) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1844359Z test_un_solo_frame (test_mis_comprobaciones.PruebasFrames.test_un_solo_frame) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1845806Z test_frame_vacio_cuenta_como_frame_distinto (test_mis_comprobaciones.PruebasPropias.test_frame_vacio_cuenta_como_frame_distinto) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.1846874Z test_inf_es_convenio_sin_deteccion_no_error (test_mis_comprobaciones.PruebasPropias.test_inf_es_convenio_sin_deteccion_no_error) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3352863Z test_integrado_en_analiza_bag (test_mis_comprobaciones.PruebasPropias.test_integrado_en_analiza_bag) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3354248Z test_limites_por_muestra_no_globales (test_mis_comprobaciones.PruebasPropias.test_limites_por_muestra_no_globales) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3355527Z test_margen_exacto_y_justo_por_encima (test_mis_comprobaciones.PruebasPropias.test_margen_exacto_y_justo_por_encima) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3356476Z test_margen_negativo_no_se_admite (test_mis_comprobaciones.PruebasPropias.test_margen_negativo_no_se_admite) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3657427Z test_mi_fallo_de_rango_cuenta_muestras_e_intervalo (test_mis_comprobaciones.PruebasPropias.test_mi_fallo_de_rango_cuenta_muestras_e_intervalo) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3658628Z test_nan_es_medida_invalida (test_mis_comprobaciones.PruebasPropias.test_nan_es_medida_invalida) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3659598Z test_un_solo_hallazgo_con_cuenta_e_intervalo (test_mis_comprobaciones.PruebasPropias.test_un_solo_hallazgo_con_cuenta_e_intervalo) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3660714Z test_valor_exactamente_en_los_limites_es_valido (test_mis_comprobaciones.PruebasPropias.test_valor_exactamente_en_los_limites_es_valido) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.3921540Z test_con_bag_real_fuera_de_rango (test_mis_comprobaciones.PruebasRangos.test_con_bag_real_fuera_de_rango) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4183223Z test_con_bag_real_sano (test_mis_comprobaciones.PruebasRangos.test_con_bag_real_sano) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4184452Z test_margen_de_tolerancia (test_mis_comprobaciones.PruebasRangos.test_margen_de_tolerancia) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4185813Z test_por_debajo_del_minimo (test_mis_comprobaciones.PruebasRangos.test_por_debajo_del_minimo) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4187065Z test_por_encima_del_maximo (test_mis_comprobaciones.PruebasRangos.test_por_encima_del_maximo) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4188277Z test_sin_muestras (test_mis_comprobaciones.PruebasRangos.test_sin_muestras) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4189764Z == Informe de caso_0_linea_base ==
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4190110Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4190426Z topic                    tipo                           n      Hz  max dt  lat med
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4191197Z /cmd_vel_demo            Twist                        400   10.00    0.10        -
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4192003Z /distancia               Range                        400   10.00    0.10    0.002
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4192813Z /distancia_filtrada      Range                        400   10.00    0.10    0.007
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4193288Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4193438Z Hallazgos:
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4194091Z   [INFO ] TODO_OK           -                      ritmos, huecos, latencias y reloj dentro de lo esperado
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4195087Z == Informe de caso_1 ==
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4195385Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4195704Z topic                    tipo                           n      Hz  max dt  lat med
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4196513Z /cmd_vel_demo            Twist                         99    2.50    0.40        -
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4197608Z /distancia               Range                        400   10.00    0.10    0.002
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4199002Z /distancia_filtrada      Range                         99    2.50    0.40    1.305
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4199604Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4199782Z Hallazgos:
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4201271Z   [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 2.5 Hz: el ritmo cae en el nodo que une ambos topics
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4202984Z   [ERROR] LATENCIA_ALTA     /distancia_filtrada    latencia mediana 1.30 s (maxima 1.40 s) > 0.1 s: los datos llegan viejos (cola llena o callback lento aguas arriba)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4203756Z Files:             caso_1.mcap
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4204069Z Bag size:          61.5 KiB
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4204518Z Storage id:        mcap
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4205099Z Duration:          39.900s
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4205642Z Start:             Oct 13 2026 14:00:00.002 (1791900000.00)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4206316Z End:               Oct 13 2026 14:00:39.902 (1791900039.90)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4206918Z Messages:          598
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4207825Z Topic information: Topic: /cmd_vel_demo | Type: geometry_msgs/msg/Twist | Count: 99 | Serialization Format: cdr
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4209207Z                    Topic: /distancia | Type: sensor_msgs/msg/Range | Count: 400 | Serialization Format: cdr
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4210503Z                    Topic: /distancia_filtrada | Type: sensor_msgs/msg/Range | Count: 99 | Serialization Format: cdr
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4211346Z == Informe de caso_1 ==
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4211527Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4211730Z topic                    tipo                           n      Hz  max dt  lat med
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4212229Z /cmd_vel_demo            Twist                         99    2.50    0.40        -
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4212734Z /distancia               Range                        400   10.00    0.10    0.002
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4213237Z /distancia_filtrada      Range                         99    2.50    0.40    1.305
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4213572Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4213679Z Hallazgos:
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4214279Z   [ERROR] CAIDA_EN_CADENA   /distancia_filtrada    /distancia 10.0 Hz -> /distancia_filtrada 2.5 Hz: el ritmo cae en el nodo que une ambos topics
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4215920Z   [ERROR] LATENCIA_ALTA     /distancia_filtrada    latencia mediana 1.30 s (maxima 1.40 s) > 0.1 s: los datos llegan viejos (cola llena o callback lento aguas arriba)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4216541Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4216707Z Graficas guardadas en /tmp/tmpwsg_uw8l/i.png
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4217088Z malo: 450 mensajes -> /tmp/tmpwupvy0tx/malo
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4217454Z sano: 450 mensajes -> /tmp/tmpwupvy0tx/sano
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4217822Z rango: 450 mensajes -> /tmp/tmp1izqj477/rango
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4218196Z malo: 150 mensajes -> /tmp/tmpr3ovjasv/malo
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4218943Z [ERROR] RANGO_FUERA    /distancia  11 de 50 muestras fuera de [min_range - 0, max_range + 0] (p. ej. [0.02, 4.00] m) entre 1.0 s y 2.0 s, en 1 tramo(s); valores de 9.90 a 9.90 m
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4219805Z sano: 150 mensajes -> /tmp/tmpyj4q1qg4/sano
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4220239Z [INFO ] /distancia: sin problemas de rango ni de frame (50 muestras)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4220876Z test_todo_en_rango (test_mis_comprobaciones.PruebasRangos.test_todo_en_rango) ... ok
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4221267Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4221417Z ======================================================================
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4221995Z FAIL: test_caso1_callback_bloqueante (test_analiza_bag.PruebasBags.test_caso1_callback_bloqueante)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4222612Z ----------------------------------------------------------------------
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4223036Z Traceback (most recent call last):
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4229963Z   File "/home/runner/work/p2-autopsia-bags-ci/p2-autopsia-bags-ci/test_analiza_bag.py", line 69, in test_caso1_callback_bloqueante
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4230874Z     self.assertIn(('LATENCIA_ALTA', '/distancia_filtrada'), codigos(hs, 'ERROR'))
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4231618Z AssertionError: ('LATENCIA_ALTA', '/distancia_filtrada') not found in {('CAIDA_EN_CADENA', '/distancia_filtrada')}
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4232109Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4232295Z ----------------------------------------------------------------------
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4232719Z Ran 32 tests in 2.090s
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4232924Z 
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.4233034Z FAILED (failures=1)
+pruebas	Pruebas unitarias	2026-10-28T17:03:00.5016004Z ##[error]Process completed with exit code 1.
