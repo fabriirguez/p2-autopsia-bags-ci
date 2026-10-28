@@ -1,0 +1,28 @@
+*   9b6c572 Merge pull request #4 from fabriirguez/rojo-a-proposito
+|\  
+| * 24bfadf Guarda la evidencia del verde tras el arreglo
+| * 0b778b1 Guarda la evidencia del rojo provocado en la CI
+| * 2e83b47 Restaura el umbral de latencia a 0,1 s (arregla el rojo provocado)
+| * d50ff4a Relaja el umbral de latencia a 2 s (rompe la CI a propósito, ejercicio 7)
+|/  
+*   bd82702 Merge pull request #3 from fabriirguez/informe-memoria
+|\  
+| * a7bf6f0 Completa la declaración de IA, fuentes, reflexión y contrato en el informe
+| * f7f9b0b Añade la lista de comprobación ampliada (8-10) y la memoria M1-M4
+* | 4a6b3b6 Merge pull request #2 from fabriirguez/ej4-quinto-fallo
+|\| 
+| * 1c82976 Corrige la causa del reto tras la prueba a ciegas
+| * 43ec5f2 Añade mi_fallo al contrato con su diagnóstico actual (punto ciego)
+| * 4189c81 Añade el quinto fallo (reto_1) y su solución razonada
+* | 6e87c60 Merge pull request #1 from fabriirguez/ej3-rango
+|\| 
+| * fa578b5 Integra las comprobaciones en analiza_bag y actualiza el contrato de mi_rango
+| * 001108e Implementa comprobar_rangos (RANGO_FUERA) y comprobar_frames (FRAME_MIXTO)
+| * af3b771 Añade pruebas propias del ejercicio 3 antes de implementarlo
+|/  
+* 92dc943 Registra en el contrato que la herramienta es ciega a mi_rango
+* 58500b4 Añade bags propios del ejercicio 2 y su comparación
+* d2af971 Escribe la hipótesis del ejercicio 2 antes de generar los bags
+* 586777e Diagnostica el caso 5: ritmo bajo en origen (sensor a 1 Hz)
+* af3dccf Escribe la hipótesis del caso 5 antes de medir
+* 46ae9a8 Punto de partida de la P2: kit del Tema 2 sin modificar

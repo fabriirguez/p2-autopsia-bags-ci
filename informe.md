@@ -1,7 +1,7 @@
 # Práctica P2 (Tema 2) — Informe
 
 **Nombre:** Fabricio Andree Rodriguez
-**Fecha:** <<RELLENAR>>
+**Fecha:** 28/10/2026
 **Entorno usado:** (Colab / local; versión de Python; ¿ROS2? ¿cuál?) Kit local (opción B) en Linux: Python 3.13, `rosbags`, `matplotlib`, `pyyaml`, Git 2.43. **Sin ROS2** (bags sintéticos generados con `simulador_bags.py`). CI en GitHub Actions (`ubuntu-24.04`, Python 3.12).
 
 > Regla de oro: **hipótesis escrita ANTES de medir**. Cada afirmación lleva su evidencia (comando + salida o gráfica).
@@ -143,12 +143,12 @@ Puntos de control de la *Guía de autoformación de la S8* (resumen de lo aprend
 
 | Campo | Contenido |
 |---|---|
-| URL del repositorio (público, o privado con acceso para el profesor) | <<RELLENAR>> |
-| Nº de commits y rama(s) de trabajo | <<RELLENAR>> |
-| Pull Request (o merge) que integra una rama en `main` (URL) | <<RELLENAR>> |
-| Ejecución de CI en **verde** (URL de la ejecución en Actions) | <<RELLENAR>> |
-| Ejecución de CI en **rojo** provocada a propósito (URL) y commit que la arregla | <<RELLENAR>> |
-| Qué rompí a propósito y cómo lo diagnostiqué en el log | <<RELLENAR>> |
+| URL del repositorio (público, o privado con acceso para el profesor) | https://github.com/fabriirguez/p2-autopsia-bags-ci (público) |
+| Nº de commits y rama(s) de trabajo | 23 commits en `main` (`git rev-list --count main`); ramas `ej3-rango`, `ej4-quinto-fallo`, `informe-memoria`, `rojo-a-proposito`, todas integradas por PR con merge commit |
+| Pull Request (o merge) que integra una rama en `main` (URL) | https://github.com/fabriirguez/p2-autopsia-bags-ci/pull/1 (ejercicio 3, el que pide el enunciado) y además https://github.com/fabriirguez/p2-autopsia-bags-ci/pull/2, https://github.com/fabriirguez/p2-autopsia-bags-ci/pull/3, https://github.com/fabriirguez/p2-autopsia-bags-ci/pull/4 |
+| Ejecución de CI en **verde** (URL de la ejecución en Actions) | https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40731732098 (`main` tras los PR) y https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40731324036 (PR del ejercicio 3). El rojo inicial de `main`, antes del ejercicio 3: https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40731149085 |
+| Ejecución de CI en **rojo** provocada a propósito (URL) y commit que la arregla | https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40731881059 → arreglado por el commit «Restaura el umbral de latencia a 0,1 s…» (`2e83b47`), verde en https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40732047349 |
+| Qué rompí a propósito y cómo lo diagnostiqué en el log | Subí `lat_max` de `analizar_ruta` de 0,1 a 2 s, simulando a alguien que «silencia» avisos. En el log de Actions el job falló en el paso **«Pruebas unitarias»** con `FAIL: test_caso1_callback_bloqueante`: el caso 1 (latencia mediana 1,30 s) dejó de dar `LATENCIA_ALTA`. Como el paso falló, Actions no ejecutó la regresión; en local, `regresion_bags.py` también marca `caso_1` como FALLO. Lo arreglé con un **commit nuevo** (revert), sin reescribir la historia. Evidencias: `evidencias/ci_rojo.txt` (resumen + `--log-failed`), `ci_verde.txt` y las capturas |
 | Bag(s) que añadí a `esperado.json` y por qué | **`mi_rango`**: primero, en `main`, con `salida 0, errores []`, que era el diagnóstico real de la herramienta original (ciega al rango). El contrato describe lo que la herramienta **hace**, no lo que debería hacer; si no, la CI estaría en rojo por algo que nadie había especificado. En la rama `ej3-rango`, al integrar mi comprobación, la regresión **se puso en rojo sola** («esperado ninguno (salida 0), obtenido ['RANGO_FUERA'] (salida 1)», `evidencias/ej3/regresion_detecta_cambio.txt`). Por eso actualicé el contrato a `salida 1, errores ["RANGO_FUERA"]` **en el mismo PR** que la comprobación, como cambio consciente y revisado. **`mi_fallo`** (mi reto): `salida 0, errores []`. Es un **punto ciego declarado**: la herramienta da `TODO_OK` aunque el bag tiene un fallo real. Si alguien añade `SELLO_REPETIDO` o una alerta por latencia máxima, la regresión avisará y obligará a actualizar el contrato a propósito. |
 
 Si **no** has podido usar GitHub, escribe aquí por qué y adjunta en `evidencias/` el `git_log.txt`, la salida de `simula_ci.py` y las capturas `ci_rojo` / `ci_verde` de la simulación local: la nota máxima del ejercicio baja (ver enunciado).
