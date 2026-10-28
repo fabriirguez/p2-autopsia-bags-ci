@@ -1,0 +1,10 @@
+Files:             caso_0_linea_base.mcap
+Bag size:          119.7 KiB
+Storage id:        mcap
+Duration:          39.910s
+Start:             Oct 13 2026 14:00:00.002 (1791900000.00)
+End:               Oct 13 2026 14:00:39.912 (1791900039.91)
+Messages:          1200
+Topic information: Topic: /cmd_vel_demo | Type: geometry_msgs/msg/Twist | Count: 400 | Serialization Format: cdr
+                   Topic: /distancia | Type: sensor_msgs/msg/Range | Count: 400 | Serialization Format: cdr
+                   Topic: /distancia_filtrada | Type: sensor_msgs/msg/Range | Count: 400 | Serialization Format: cdr
