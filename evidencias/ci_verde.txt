@@ -1,0 +1,12 @@
+
+✓ rojo-a-proposito CI fabriirguez/p2-autopsia-bags-ci#4 · 40732047349
+Triggered via pull_request less than a minute ago
+
+JOBS
+✓ pruebas in 25s (ID 122970653271)
+
+ARTIFACTS
+informe-caso1
+
+For more information about the job, try: gh run view --job=122970653271
+View this run on GitHub: https://github.com/fabriirguez/p2-autopsia-bags-ci/actions/runs/40732047349
