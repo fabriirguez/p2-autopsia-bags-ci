@@ -1,5 +1,6 @@
 """Pruebas del ejercicio 3. Al principio FALLAN (NotImplementedError): tu trabajo es hacer que pasen.
 Despues, anade tus propias pruebas en la clase PruebasPropias (minimo dos)."""
+import re
 import tempfile
 import unittest
 
@@ -114,14 +115,18 @@ class PruebasPropias(unittest.TestCase):
 
     # --- con bags reales -----------------------------------------------------------------------------
     def test_mi_fallo_de_rango_cuenta_muestras_e_intervalo(self):
-        # Mi bag: 9,9 m entre 10 s y 12 s a 10 Hz -> 20 muestras fuera de rango, de 10.0 s a 11.9 s.
+        # Mi bag: 9,9 m durante [10 s, 12 s) a 10 Hz -> 20 muestras fuera de rango.
+        # El simulador añade ±1 ms de jitter: la muestra de 10.0 s puede quedar fuera de la ventana y la de
+        # 12.0 s dentro, así que el intervalo se comprueba con tolerancia y no con valores exactos (mi primera
+        # versión suponía 10.0-11.9 s y falló por esa suposición, no por la herramienta).
         with tempfile.TemporaryDirectory() as d:
             sim.generar('rango', d, duracion=15, fuera_de_rango=(10, 12, 9.9))
             h = mc.comprobar_rangos(mc.leer_muestras_range(f'{d}/rango', '/distancia'), '/distancia')
         self.assertEqual(len(h), 1)
         self.assertIn('20 de 150', h[0].detalle)
-        self.assertIn('10.0 s', h[0].detalle)
-        self.assertIn('11.9 s', h[0].detalle)
+        ini, fin = map(float, re.search(r'entre ([\d.]+) s y ([\d.]+) s', h[0].detalle).groups())
+        self.assertTrue(9.95 <= ini <= 10.15, ini)
+        self.assertTrue(11.85 <= fin <= 12.05, fin)
 
     def test_integrado_en_analiza_bag(self):
         # La comprobación debe llegar a analiza_bag (y por tanto a la regresión y a la CI).
