@@ -129,9 +129,11 @@ Las 7 preguntas de la clase + 3 mías (cada una con su herramienta, qué detecta
 
 | # | Pregunta | Herramienta | Detecta | Caso que la justifica |
 |---|---|---|---|---|
-| 8 | <<RELLENAR>> | | | |
-| 9 | <<RELLENAR>> | | | |
-| 10 | <<RELLENAR>> | | | |
+| 8 | ¿El **contenido** de cada dato es físicamente posible y está en el marco esperado? (valores dentro de `[min_range, max_range]`, sin `NaN`, `±Inf` solo como convenio; un único `frame_id`) | `mis_comprobaciones.py` (`RANGO_FUERA`, `FRAME_MIXTO`), integrado en `analiza_bag.py`; en vivo, `ros2 topic echo /distancia --field range` | Datos imposibles que el ritmo no ve y que **se propagan** aguas abajo; sensores mal configurados (límites a 0); frames mezclados que tf2 colocaría mal | `mi_rango`: 2 s publicando 9,9 m con `max_range` = 4 m, y la herramienta original decía `TODO_OK`. Con la pregunta 8 sale `RANGO_FUERA` en `/distancia` **y** en `/distancia_filtrada` (22 muestras contaminadas por la media del filtro) |
+| 9 | ¿Cada dato es **nuevo** o se está republicando uno viejo? (sellos repetidos; latencia **máxima / p95** y no solo la mediana) | `herramientas_extra/por_tramos.py` (sellos repetidos, latencia máxima, desviación por tramo); `ros2 topic echo /x --field header.stamp`; gráfica de latencia de `--png` | Nodos «zombi» que publican por temporizador una caché antigua, fallos intermitentes que la mediana esconde, señales congeladas | `reto_1` (mi quinto fallo): ritmo perfecto y latencia **mediana** de 7 ms (`TODO_OK`), pero **latencia máxima de 15 s**, 150 sellos repetidos y una señal plana durante 15 s mientras el robot está parado sin motivo |
+| 10 | ¿La **señal** de salida de cada eslabón sigue a la de entrada a tiempo? (retraso de la señal, no del mensaje) | `herramientas_extra/retraso_senal.py` (correlación cruzada de `range`); panel de valores de `--png` | Filtros cuyo retraso efectivo crece al bajar el ritmo (ventana definida en muestras), salidas desacopladas de la entrada | Caso 5: cada mensaje llega en 7 ms, pero la señal filtrada va **2,0 s** detrás de la real (0,3 s en la línea base), porque la media móvil de 5 muestras a 1 Hz abarca 5 s. La latencia por mensaje no lo puede ver |
+
+Orden de coste: la 8 es barata (una pasada por los valores); la 9 necesita sellos y mirar por tramos; la 10, valores de dos topics y una correlación. Encajan detrás de la 5 («¿llegan frescos?»), que solo mira el transporte. Estas tres miran **qué** se transporta.
 
 ## Ejercicio 6 — Autoformación guiada
 
@@ -153,13 +155,17 @@ Si **no** has podido usar GitHub, escribe aquí por qué y adjunta en `evidencia
 
 ## Memoria conceptual (con tus palabras; máximo 1 página en total)
 
-**M1.** Familias de fallo de arquitectura (estructural, dinámico, de tiempo, de origen aguas arriba): un ejemplo de cada una y la herramienta más barata que la detectaría. <<RELLENAR>>
+**M1.** Familias de fallo de arquitectura (estructural, dinámico, de tiempo, de origen aguas arriba): un ejemplo de cada una y la herramienta más barata que la detectaría.
+**Estructural:** el sensor publica en *best effort* y el filtro se suscribe en *reliable*. No pasa ningún dato → `ros2 topic info -v`. **Dinámico:** mi `mi_lento`, con un callback de 0,15 s que baja el filtro a 6,7 Hz y envejece el dato 1,1 s → `ros2 topic hz` en cada eslabón. **Tiempo:** un nodo con `use_sim_time` sin `/clock` estampa a 0 → `ros2 param get <nodo> use_sim_time`. **Origen aguas arriba:** un cable flojo hace callar al sensor 4 s y el hueco recorre toda la cadena → mirar dónde empieza **primero** el hueco (`HUECO_ORIGEN`); lo de abajo es consecuencia.
 
-**M2.** ¿Por qué una herramienta de análisis necesita pruebas unitarias, y qué significa que «un fallo no detectado es una especificación pendiente»? <<RELLENAR>>
+**M2.** ¿Por qué una herramienta de análisis necesita pruebas unitarias, y qué significa que «un fallo no detectado es una especificación pendiente»?
+La herramienta también es código que decide. Un `TODO_OK` falso da confianza falsa, y una falsa alarma rompe la CI y enseña a ignorarla. Las pruebas fijan qué debe decir en casos conocidos. También pueden estar mal: mi prueba de `mi_rango` esperaba un intervalo exacto y era ella la que fallaba (por el jitter). «Fallo no detectado = especificación pendiente» significa que un `TODO_OK` sobre un bag malo no prueba que no haya fallo, sino que **nadie ha dicho aún que eso lo es**. Se arregla escribiéndolo: prueba, comprobación y contrato. Así `mi_rango` pasó de salida 0 a 1, y `mi_fallo` queda como punto ciego declarado.
 
-**M3.** ¿Qué ocurre exactamente en un conflicto de fusión en Git, cómo se ve en el fichero y cómo se resuelve? ¿Por qué no se debe «aceptar el mío» sin leer? <<RELLENAR>>
+**M3.** ¿Qué ocurre exactamente en un conflicto de fusión en Git, cómo se ve en el fichero y cómo se resuelve? ¿Por qué no se debe «aceptar el mío» sin leer?
+Git compara cada rama con el **ancestro común**. Si las dos cambiaron las mismas líneas, no puede saber la intención: para la fusión y deja ambas versiones entre `<<<<<<< HEAD`, `=======` y `>>>>>>> rama`. Para resolverlo: leer las dos, escribir la versión correcta (que puede combinar ambas), quitar los marcadores, pasar las pruebas, `git add` y `git commit`. «Aceptar el mío» **borra en silencio el trabajo del otro** y suele compilar. Por ejemplo: si mi rama cambia `mi_rango` en `esperado.json` y otra añade `mi_fallo`, quedarme con lo mío saca `mi_fallo` del contrato, y la CI sigue en verde sin vigilarlo.
 
-**M4.** ¿Qué garantiza y qué NO garantiza una CI en verde? Usa como ejemplo el contrato de regresión con bags. <<RELLENAR>>
+**M4.** ¿Qué garantiza y qué NO garantiza una CI en verde? Usa como ejemplo el contrato de regresión con bags.
+**Garantiza** que, en ese commit y en un entorno limpio, todas las pruebas pasan y cada bag de referencia da **exactamente** el diagnóstico del contrato: nadie ha cambiado el comportamiento sin querer. **No garantiza** que ese comportamiento sea correcto. `mi_fallo` figura en el contrato con salida 0 y la CI está en verde, **aunque ese bag deja el robot parado 13 s sin motivo**. Tampoco cubre bags fuera del contrato, el robot real con ROS2, ni el futuro (`rosbags>=0.10` no está fijado). Verde significa «se comporta como se especificó», no «no hay fallos».
 
 ## Opcional — `ros2 bag play` y RViz2
 
