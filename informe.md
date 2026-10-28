@@ -70,11 +70,37 @@ Lectura: el eslabón es el filtro (`/distancia` → `/distancia_filtrada`) y la 
 
 ## Ejercicio 3 — Extensión de la herramienta
 
-Comprobación(es) implementada(s): <<RELLENAR>>
-Decisiones de diseño (¿ERROR o WARN? ¿margen?, ¿qué falsos positivos hay?): <<RELLENAR>>
-Pruebas propias añadidas (nombre y qué comprueban): <<RELLENAR>>
-Salida de `python3 -m unittest -v test_mis_comprobaciones`: <<RELLENAR>>
-Resultado sobre `bags/mi_rango` (antes: TODO_OK; ahora: ...): <<RELLENAR>>
+Comprobación(es) implementada(s): las dos, en `mis_comprobaciones.py` y sin cambiar nombres ni firmas.
+- **`comprobar_rangos` → `ERROR RANGO_FUERA`**: devuelve un único hallazgo con cuántas muestras fallan y de cuántas, el intervalo (primera y última), en cuántos tramos y entre qué valores. Usa los `min_range` y `max_range` **de cada mensaje** (intervalo cerrado). `±Inf` → `INFO RANGO_INFINITO` (no es error); `NaN` → error; margen negativo → `ValueError`.
+- **`comprobar_frames` → `WARN FRAME_MIXTO`** (ampliación): lista los `frame_id` en orden de aparición con su cuenta; el frame vacío cuenta como uno más.
+- **Integración**: `analiza_bag.analizar_ruta` aplica ambas a todos los topics `sensor_msgs/msg/Range` mediante `comprobar_bag()`, con un import tardío para evitar la importación circular. Así, la regresión con bags y la CI vigilan los rangos sin que nadie tenga que acordarse de ejecutar otro script.
+- **Proceso (TDD) en la rama `ej3-rango`**: primero las pruebas en rojo (commit «Añade pruebas propias…»), después la implementación y por último la integración y el contrato.
+Decisiones de diseño (¿ERROR o WARN? ¿margen?, ¿qué falsos positivos hay?):
+- **¿Por qué `RANGO_FUERA` es ERROR?** El valor es **físicamente imposible** para ese sensor según sus propios límites, y `sensor_msgs/Range` dice que esos valores deben descartarse. Además **se propaga**: en `mi_rango` el filtro mete el 9,9 en su media y `/distancia_filtrada` también se sale (22 muestras, 4,17-9,90 m). El controlador acabaría actuando como si tuviera 9,9 m libres delante, que es un riesgo de seguridad. El origen se ve porque `/distancia` empieza antes (10,1 s frente a 10,2 s).
+- **¿Por qué `FRAME_MIXTO` es WARN?** Cada valor puede ser correcto y el cambio de frame puede ser legítimo: varios sensores publicando en un mismo topic, o un frame renombrado tras cambiar la configuración. Es un síntoma que pide revisión humana (tf2 colocaría el dato en otro sitio), pero por sí solo no demuestra que el dato sea falso, así que no rompe la CI.
+- **Margen = 0** (integración y por defecto). Los límites los declara el propio sensor en cada mensaje, así que un valor fuera de ellos es inválido por definición, y los extremos se aceptan (prueba `test_valor_exactamente_en_los_limites_es_valido`). Solo usaría un margen pequeño, del orden de la resolución del sensor (≈ 1 cm), si un sensor real satura en `max_range + ruido`. Es configurable en `comprobar_bag(..., margen=)`.
+- **Falsos positivos posibles y qué hago con ellos:** (1) **`±Inf` como «sin detección» o «demasiado cerca»** (convenio de `Range.msg`): tratarlos como error dispararía la CI con cualquier sensor que mira al vacío, así que los cuento como INFO (prueba `test_inf_es_convenio_sin_deteccion_no_error`). (2) **Saturación con ruido** (`max_range + ε`): se resuelve con el margen. (3) **Límites mal configurados en el driver** (p. ej. `max_range = 0`): todas las muestras saldrían como `RANGO_FUERA`. No es un falso positivo del dato sino de los metadatos, pero el hallazgo lo deja ver (detalle «p. ej. [min, max]»). (4) **Sensores de distancia fija** (`min_range == max_range`, con ±Inf): cubiertos por la regla de Inf. (5) **Topics derivados** (filtro): heredan el error del origen, así que en un sistema con muchos derivados conviene informar solo del primero, como hace `HUECO_ORIGEN`. Lo dejo como mejora.
+Pruebas propias añadidas (nombre y qué comprueban), 10 en `PruebasPropias`:
+
+| Prueba | Qué comprueba |
+|---|---|
+| `test_valor_exactamente_en_los_limites_es_valido` | `range == min_range` y `range == max_range` son válidos (intervalo cerrado) |
+| `test_margen_exacto_y_justo_por_encima` | `max + margen` pasa; `max + margen + 1e-6` falla |
+| `test_margen_negativo_no_se_admite` | un margen negativo lanza `ValueError` |
+| `test_un_solo_hallazgo_con_cuenta_e_intervalo` | un único hallazgo, con «3 de 5» y el intervalo 10.0 s-11.9 s |
+| `test_limites_por_muestra_no_globales` | se usan los límites de cada mensaje |
+| `test_inf_es_convenio_sin_deteccion_no_error` | `±Inf` → solo `INFO RANGO_INFINITO`, sin ERROR (falso positivo evitado) |
+| `test_nan_es_medida_invalida` | `NaN` → `ERROR RANGO_FUERA` con «NaN» en el detalle |
+| `test_frame_vacio_cuenta_como_frame_distinto` | `''` cuenta como frame y aparece como «(vacío)» |
+| `test_mi_fallo_de_rango_cuenta_muestras_e_intervalo` | mi bag: 20 de 150 muestras, intervalo ≈ 10-12 s |
+| `test_integrado_en_analiza_bag` | `analizar_ruta` da `RANGO_FUERA` (y no `TODO_OK`) en el bag malo y `TODO_OK` en el sano |
+
+Lección: mi primera versión de `test_mi_fallo_de_rango…` esperaba exactamente «10.0 s - 11.9 s» y falló. **La herramienta tenía razón**: el simulador añade ±1 ms de jitter, la muestra de 10,0 s puede caer justo antes de la ventana y la de 12,0 s justo dentro (sale 10.1 s-12.0 s). Corregí **la prueba** (tolerancia) y no el código: una prueba también puede tener una especificación equivocada.
+Salida de `python3 -m unittest -v test_mis_comprobaciones`: completa en `evidencias/ej3/unittest_mis_comprobaciones.txt` → **`Ran 19 tests … OK`**: 7 dadas de rangos, 2 de frames (ya no se omiten) y 10 propias. Las 13 originales de `test_analiza_bag` siguen pasando (`bash ci_local.sh` → «VERDE: todo pasa»).
+Resultado sobre `bags/mi_rango` (antes: TODO_OK; ahora: ...):
+- **Antes** (`evidencias/ej3/mi_rango_antes.txt`): `[INFO] TODO_OK`, salida 0.
+- **Ahora** (`evidencias/ej3/mi_rango_despues.txt`): `python3 mis_comprobaciones.py bags/mi_rango /distancia` → `[ERROR] RANGO_FUERA /distancia 20 de 400 muestras fuera de [...] (p. ej. [0.02, 4.00] m) entre 10.1 s y 12.0 s, en 1 tramo(s); valores de 9.90 a 9.90 m`, **salida 1**. Con el bag sano `caso_0_linea_base`, salida 0. Integrado en `analiza_bag.py`, aparece además `RANGO_FUERA` en `/distancia_filtrada` (propagación).
+- Al integrarla, la regresión **se puso en rojo sola** (`evidencias/ej3/regresion_detecta_cambio.txt`: `mi_rango esperado ninguno (salida 0), obtenido ['RANGO_FUERA'] (salida 1)`). El contrato hizo su trabajo: obliga a actualizar `esperado.json` a propósito, en la misma rama y con explicación (ejercicio 7).
 
 ## Ejercicio 4 — Un quinto fallo
 

@@ -1,0 +1,20 @@
+$ python3 analiza_bag.py bags/mi_rango --esperado /distancia=10   # DESPUÉS (comprobación integrada)
+== Informe de mi_rango ==
+
+topic                    tipo                           n      Hz  max dt  lat med
+/cmd_vel_demo            Twist                        400   10.00    0.10        -
+/distancia               Range                        400   10.00    0.10    0.002
+/distancia_filtrada      Range                        400   10.00    0.10    0.007
+
+Hallazgos:
+  [ERROR] RANGO_FUERA       /distancia             20 de 400 muestras fuera de [min_range - 0, max_range + 0] (p. ej. [0.02, 4.00] m) entre 10.1 s y 12.0 s, en 1 tramo(s); valores de 9.90 a 9.90 m
+  [ERROR] RANGO_FUERA       /distancia_filtrada    22 de 400 muestras fuera de [min_range - 0, max_range + 0] (p. ej. [0.02, 4.00] m) entre 10.2 s y 12.3 s, en 1 tramo(s); valores de 4.17 a 9.90 m
+salida: 1
+
+$ python3 mis_comprobaciones.py bags/mi_rango /distancia
+[ERROR] RANGO_FUERA    /distancia  20 de 400 muestras fuera de [min_range - 0, max_range + 0] (p. ej. [0.02, 4.00] m) entre 10.1 s y 12.0 s, en 1 tramo(s); valores de 9.90 a 9.90 m
+salida: 1
+
+$ python3 mis_comprobaciones.py bags/caso_0_linea_base /distancia
+[INFO ] /distancia: sin problemas de rango ni de frame (400 muestras)
+salida: 0
