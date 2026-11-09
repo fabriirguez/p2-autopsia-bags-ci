@@ -1,3 +1,11 @@
+*   3a51932 Merge pull request #5 from fabriirguez/ej6-autoformacion
+|\  
+| * 23eea09 Redacta el ejercicio 6 y actualiza el informe tras usar ROS 2
+| * 651202a Añade las evidencias del ejercicio 6 (ROS 2 Jazzy en VM)
+| * ff32797 Añade la carpeta de evidencias del ejercicio 6 (autoformación S8)
+|/  
+* 4b7d1e8 Añade las capturas de la CI en rojo y en verde
+* 817fa6e Completa el ejercicio 7 en el informe: URL, evidencias e historial
 *   9b6c572 Merge pull request #4 from fabriirguez/rojo-a-proposito
 |\  
 | * 24bfadf Guarda la evidencia del verde tras el arreglo
