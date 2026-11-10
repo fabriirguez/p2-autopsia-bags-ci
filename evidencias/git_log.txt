@@ -1,3 +1,4 @@
+* 540361f Cierra la entrega: número de commits e historial actualizados
 *   3a51932 Merge pull request #5 from fabriirguez/ej6-autoformacion
 |\  
 | * 23eea09 Redacta el ejercicio 6 y actualiza el informe tras usar ROS 2
